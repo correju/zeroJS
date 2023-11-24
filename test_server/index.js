@@ -4,7 +4,7 @@
 const app = require('../core/app')
 const server = app.create()
 
-app.get('/foo/:id/:name', (req, res) => {
+app.get('/foo/:id/:name', (req, res, next) => {
   const query = req.query;
   res.send({...req.params, ...query});
 });
