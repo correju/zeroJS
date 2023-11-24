@@ -5,11 +5,7 @@ const app = require('../core/app')
 const server = app.create()
 
 app.get('/foo/:id/:name', (req, res) => {
-  // res.send(req.params);
-  // res.send(true);
-  // res.send(1);
-  res.send('hello world');
-  // res.send('<h1>hello world</h1>');
+  res.send(req.params);
 });
 
 app.get('/foo/bar2', (req, res) => {
