@@ -2,8 +2,8 @@ const http = require('http');
 const { Buffer } = require('buffer');
 const { routesCallback }  = require('./route');
 const methods = require('../config/methods');
+const middleware = require('./middleware');
 
-const middleware = require('../middleware');
 const app = {
   create(errorsObject = {}) {
     return http.createServer(middleware.main(errorsObject));
@@ -13,5 +13,7 @@ const app = {
 methods.forEach((method) => {
   app[method] = routesCallback(method);
 });
+
+app.use = middleware.setMiddleWares;
 
 module.exports = app;

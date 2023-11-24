@@ -1,4 +1,4 @@
-const pathtoRegexp = require('../../util/path-to-regexp');
+const pathtoRegexp = require('../util/path-to-regexp');
 const methods = require('../../config/methods');
 const routes = methods.reduce((accumulator, currentValue) =>
   ({...accumulator, [currentValue]: []}), {});

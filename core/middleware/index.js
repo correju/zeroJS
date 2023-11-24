@@ -3,21 +3,22 @@ const queryParser = require('./query-parser');
 const handler = require('./handler');
 const util = require('util');
 const { pipeline } = require('stream/promises')
-const extendResponse = require('../core/response');
+const extendResponse = require('../response');
 const defaultErrorsObject = require('./defaultError');
-const [getMiddleWareArray, setMiddleWareArray ] = ((middlewareArray) =>
+const [getMiddleWares, setMiddleWares ] = ((middlewareArray) =>
     [() => middlewareArray, (middleware) => middlewareArray.push(middleware)])([]);
 
-const fixedMiddlewares = [];
-
 const main = (errorsObject) => async (req, res) => {
-  const middlewares = getMiddleWareArray();
+  const middlewares = getMiddleWares();
+  const middlewareForPipeline = middlewares.map((middleware) => middleware(req, res));
+
   extendResponse(res);
   try {
     await pipeline(
       req,
       bodyParser(req, res),
       queryParser(req, res),
+      ...middlewareForPipeline,
       handler(req, res)
     );
   } catch (error) {
@@ -29,6 +30,5 @@ const main = (errorsObject) => async (req, res) => {
 
 module.exports = {
   main,
-  getMiddleWareArray,
-  setMiddleWareArray,
+  setMiddleWares,
 };

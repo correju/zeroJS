@@ -1,5 +1,5 @@
 const { Transform } = require('stream');
-const { routeMatch } = require('../core/route/');
+const { routeMatch } = require('../route');
 
 const createHandler= (req, res) => {
   const transform = new Transform({
