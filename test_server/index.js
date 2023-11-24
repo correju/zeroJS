@@ -5,13 +5,9 @@ const app = require('../core/app')
 const server = app.create()
 
 app.get('/foo/:id/:name', (req, res) => {
-  res.send(req.params);
+  const query = req.query;
+  res.send({...req.params, ...query});
 });
-
-app.get('/foo/bar2', (req, res) => {
-  res.end('hello world');
-});
-
 
 //start the server
 server.listen(3000, () => {

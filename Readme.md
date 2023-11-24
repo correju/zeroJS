@@ -17,7 +17,7 @@ server.listen(3000, () => {
 })
 ```
 
-## How tollisten to specific routes
+## How to listen to specific routes
 
 ```javascript
 app.get('/desire-route', (req, res) => {
@@ -36,3 +36,45 @@ app.patch('/desire-route', (req, res) => {
   // Desire code to process
 })
 ```
+
+## How to respond the request
+```javascript
+app.get('/desire-route', (req, res) => {
+  // returns header Content-Type application/json
+  res.send(1)
+});
+
+app.get('/desire-route', (req, res) => {
+  // returns header Content-Type application/json
+  res.send(true)
+});
+
+app.get('/desire-route', (req, res) => {
+  // returns header Content-Type application/json
+  res.send({hello: 'world'})
+});
+
+app.get('/desire-route', (req, res) => {
+  // returns header Content-Type text/html
+  res.send('text')
+});
+```
+
+## How to receive params in URL
+```javascript
+app.get('/foo/:id/:name', (req, res) => {
+  const {id, name } = req.params;
+  res.send({id, name})
+});
+```
+
+## How to receive query params
+If the request url is /foo/1/julian?p=1
+```javascript
+app.get('/foo/:id/:name', (req, res) => {
+  // The p value is "1"
+  res.send({...req.params, req.query})
+  // The response is {id: 1, name: 'Julian', p: "1"}
+});
+```
+**Note: The query params will always be strings**

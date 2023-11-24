@@ -23,6 +23,7 @@ const app = {
         myUrl.searchParams.forEach((value, name, searchParams) => {
           query[name] = value;
         });
+        req.query = query;
 
         // Get the headers as an object
         const headers = req.headers;
