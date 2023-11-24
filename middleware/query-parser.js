@@ -15,8 +15,6 @@ const createParamParser = (req, res) => {
       });
       req.query = query;
       req.pathname = myUrl.pathname;
-      console.log('pathname', );
-      this.push(Buffer.from('1'));
       next()
     }
   });
