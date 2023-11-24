@@ -1,8 +1,11 @@
 const { Transform } = require('stream')
+const { URLSearchParams } = require('url');
 
-const bodyParser = (body) => {
-  // Process the body here
-  return body;
+const bodyParser = {
+  'application/json': (rawData) =>  JSON.parse(rawData),
+  'application/x-www-form-urlencoded': (rawData) =>
+    Object.fromEntries(new URLSearchParams(rawData)),
+  default: (rawData) => rawData,
 };
 
 const createBodyParser = (req, res) => {
@@ -13,9 +16,16 @@ const createBodyParser = (req, res) => {
       next();
     },
     final(next) {
-      const body = Buffer.concat(buffer);
-      this.push(Buffer.from('1'));
-      next()
+      const rawData = Buffer.concat(buffer);
+      const contentType = req.headers['content-type'];
+      const bodyParserFunction = bodyParser[contentType] ?? bodyParser['application/json'];
+      try {
+        body = bodyParserFunction(rawData);
+        req.body = body;
+        next()
+      } catch (error) {
+        next(400);
+      }
     }
   });
   return transform;
