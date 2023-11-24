@@ -1,16 +1,15 @@
 const http = require('http');
 const { URL } = require('url');
 const { Buffer } = require('buffer');
-const methods = require('../config/methods')
-const pathtoRegexp = require('../util/path-to-regexp');
-
-const routes = methods.reduce((accumulator, currentValue) =>
-  ({...accumulator, [currentValue]: []}), {});
+const { routesCallback, routeMatch }  = require('./route');
+const methods = require('../config/methods');
+const extendResponse = require('./response');
 
 const app = {
   create() {
     return http.createServer((req, res) => {
         // get url and parse
+        extendResponse(res);
         const siteUrl = `https://${req.headers.host}${req.url}`;
 
         //get the path
@@ -19,7 +18,6 @@ const app = {
 
         // get HTTP method
         const method = req.method.toLowerCase();
-
         // get search params
         let query = {};
         myUrl.searchParams.forEach((value, name, searchParams) => {
@@ -35,27 +33,12 @@ const app = {
           buffer.push(chunk);
         }).on('end', () => {
           const body = Buffer.concat(buffer).toString();
-          const match = routes[method].find((route) => {
-            const a = route.regexRoute.exec(pathname);
-            return a;
-          });
+          const match = routeMatch({req, res, method, pathname});
           if (!match) {
             res.writeHead(404)
             return res.end('not found')
           }
           match.callback(req, res)
-          // res.end(method)
-
-          // at this point, `body` has the entire request body stored in it as a string
-          //send the response
-          // res.writeHead(200, { 'Content-Type': 'application/json' });
-          // res.end(JSON.stringify({
-          //   pathname,
-          //   method,
-          //   query,
-          //   headers,
-          //   body,
-          // }));
         });
 
     });
@@ -63,10 +46,7 @@ const app = {
 }
 
 methods.forEach((method) => {
-  app[method] = (path, callback) => {
-    const regexRoute =  pathtoRegexp(path)
-    routes[method].push({regexRoute, callback})
-  }
+  app[method] = routesCallback(method);
 });
 
 module.exports = app;
