@@ -5,8 +5,13 @@ const app = require('../core/app')
 const server = app.create()
 
 app.get('/foo/:id/:name', (req, res, next) => {
-  const query = req.query;
-  res.send({...req.params, ...query});
+  const { query, params } = req;
+  res.send({ ...params, ...query });
+});
+
+app.post('/foo/:id/:name', (req, res, next) => {
+  const { query, body, params } = req;
+  res.send({ ...params, ...query, ...body });
 });
 
 //start the server
